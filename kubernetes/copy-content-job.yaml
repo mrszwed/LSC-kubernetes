@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: copy-web-content
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: copy-files
+        image: busybox
+        command: ["/bin/sh", "-c"]
+        args: ["cp /source/* /dest/"]
+        volumeMounts:
+        - name: config-volume
+          mountPath: /source
+        - name: pvc-volume
+          mountPath: /dest
+      volumes:
+      - name: config-volume
+        configMap:
+          name: sample-content
+      - name: pvc-volume
+        persistentVolumeClaim:
+          claimName: test-dynamic-volume-claim
